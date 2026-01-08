@@ -1,0 +1,137 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ==========================================
+   STREAM VIDEO SDK OVERRIDES
+   ========================================== */
+
+/* General positioning */
+.str-video__call-stats {
+  max-width: 500px;
+  position: relative;
+}
+
+.str-video__speaker-layout__wrapper {
+  max-height: 700px;
+}
+
+.str-video__call-controls__button {
+  height: 40px;
+}
+
+/* Theming for Stream Components 
+   Default (Light Mode) -> Dark Mode overrides
+*/
+
+.str-video__participant-list {
+  background-color: white;
+  padding: 10px;
+  border-radius: 10px;
+  color: #0f172a; /* slate-900 */
+  height: 100%;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+}
+
+/* Dark Mode Overrides for Stream */
+.dark .str-video__participant-list {
+  background-color: #0f172a; /* slate-900 */
+  color: white;
+  box-shadow: none;
+}
+
+.dark .str-video__participant-details,
+.dark .str-video__menu-container,
+.dark .str-video__notification {
+  color: white;
+}
+
+/* ==========================================
+   CLERK OVERRIDES
+   ========================================== */
+
+.cl-logoBox {
+  height: 40px;
+}
+
+.cl-dividerLine {
+  background: #e2e8f0; /* slate-200 */
+  height: 2px;
+}
+
+.cl-socialButtonsIconButton {
+  border: 3px solid #e2e8f0;
+}
+
+/* Dark Mode Overrides for Clerk */
+.dark .cl-userButtonPopoverActionButtonIcon {
+  color: white;
+}
+
+.dark .cl-dividerLine {
+  background: #252a41;
+}
+
+.dark .cl-socialButtonsIconButton {
+  border: 3px solid #565761;
+}
+
+.dark .cl-internal-wkkub3 {
+  color: white;
+}
+
+.dark .cl-userButtonPopoverActionButton {
+  color: white;
+}
+
+/* ==========================================
+   UTILITIES & ANIMATIONS
+   ========================================== */
+
+.glassmorphism {
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.glassmorphism2 {
+  background: rgba(18, 17, 17, 0.25);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+@layer utilities {
+  .flex-center {
+    @apply flex justify-center items-center;
+  }
+
+  .flex-between {
+    @apply flex justify-between items-center;
+  }
+}
+
+/* Sidebar Animation */
+.show-block {
+  width: 100%;
+  max-width: 350px;
+  display: block;
+  animation: show 0.7s forwards linear;
+}
+
+@keyframes show {
+  0% {
+    animation-timing-function: ease-in;
+    width: 0%;
+  }
+
+  100% {
+    animation-timing-function: ease-in;
+    width: 100%;
+  }
+}
