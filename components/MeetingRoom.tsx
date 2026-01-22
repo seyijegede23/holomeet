@@ -85,11 +85,14 @@ const MeetingRoom = () => {
   }, [isAdmitted, callingState, call, user]);
 
   useEffect(() => {
-    if (callingState === CallingState.JOINED && isAdmitted && call && user && call.state.createdBy?.id === user.id) {
+    // Relaxed condition: If I am admitted (Host), I should listen for requests.
+    if (callingState === CallingState.JOINED && isAdmitted && call && user) {
       const handleRequest = (event: any) => {
         if (event.type === 'request_entry') {
+          console.log("Request received from:", event.data);
           setRequestingUsers((prev) => {
             if (prev.find((u) => u.id === event.data.id)) return prev;
+            toast({ title: `New joining request from ${event.data.name}` }); // Notification
             return [...prev, { id: event.data.id, name: event.data.name }];
           });
         }
