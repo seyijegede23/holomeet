@@ -99,6 +99,27 @@ const MeetingRoom = () => {
     }
   }, [isAdmitted, callingState, call, user]);
 
+  // Toggle Media based on Admission status
+  useEffect(() => {
+    if (!isAdmitted && call) {
+        // Force disable if not admitted (Guest in waiting room)
+        const disableMedia = async () => {
+             await call.camera.disable();
+             await call.microphone.disable();
+        };
+        disableMedia();
+    } else if (isAdmitted && call) {
+        // Optional: Re-enable or let user decide. 
+        // usually, we want them to enter with what they chose in Setup, but if we forced it off, we might need to restore.
+        // For now, let's enable it so they aren't confused why they are mute.
+        const enableMedia = async () => {
+             await call.camera.enable();
+             await call.microphone.enable();
+        };
+        enableMedia();
+    }
+  }, [isAdmitted, call]);
+
   if (callingState !== CallingState.JOINED) return <Loader />;
 
   if (!isAdmitted) return <WaitingScreen />;
@@ -123,9 +144,9 @@ const MeetingRoom = () => {
         
 
 
-        {/* Requests Overlay */}
+        {/* Requests Overlay - Increased Z-index and visibility */}
         {requestingUsers.length > 0 && (
-          <div className="absolute top-10 right-4 z-50 flex w-80 flex-col gap-2 rounded-xl bg-slate-900/90 p-4 border border-slate-700 shadow-2xl backdrop-blur-sm">
+          <div className="absolute top-10 right-4 z-[100] flex w-80 flex-col gap-2 rounded-xl bg-slate-900/95 p-4 border border-slate-700 shadow-2xl backdrop-blur-md">
              <h3 className="text-sm font-semibold text-slate-200 mb-2">Joining Requests ({requestingUsers.length})</h3>
             {requestingUsers.map((u) => (
               <div
@@ -138,7 +159,7 @@ const MeetingRoom = () => {
                 <div className="flex gap-2">
                   <Button
                     size="sm"
-                    className="h-8 w-8 rounded-full bg-green-500 hover:bg-green-600 p-0 text-white"
+                    className="h-8 w-8 rounded-full bg-green-500 hover:bg-green-600 p-0 text-white transition-transform hover:scale-110"
                     onClick={() => {
                       call?.sendCustomEvent({
                         type: 'allow_entry',
@@ -147,17 +168,19 @@ const MeetingRoom = () => {
                       setRequestingUsers((prev) =>
                         prev.filter((req) => req.id !== u.id)
                       );
+                      toast({ title: `${u.name} admitted` });
                     }}
                   >
                     <Check size={16} />
                   </Button>
                   <Button
                     size="sm"
-                    className="h-8 w-8 rounded-full bg-red-500 hover:bg-red-600 p-0 text-white"
+                    className="h-8 w-8 rounded-full bg-red-500 hover:bg-red-600 p-0 text-white transition-transform hover:scale-110"
                     onClick={() => {
                       setRequestingUsers((prev) =>
                         prev.filter((req) => req.id !== u.id)
                       );
+                      toast({ title: `${u.name} rejected` });
                     }}
                   >
                     <X size={16} />
