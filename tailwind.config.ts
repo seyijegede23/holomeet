@@ -20,13 +20,14 @@ const config = {
     extend: {
       colors: {
         dark: {
-          1: '#1C1F2E',
-          2: '#161925',
-          3: '#252A41',
-          4: '#1E2757',
+          1: '#0B0E14', // Deeper black/blue
+          2: '#151A23', // Rich dark gray/blue
+          3: '#1F2433', // Lighter panel color
+          4: '#282E40', // Hover state
         },
         blue: {
           1: '#0E78F9',
+          2: '#3B82F6', // Lighter blue for gradients
         },
         sky: {
           1: '#C9DDFF',
@@ -38,6 +39,7 @@ const config = {
         },
         purple: {
           1: '#830EF9',
+          2: '#A855F7', // Lighter purple
         },
         yellow: {
           1: '#F9A90E',

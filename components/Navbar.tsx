@@ -6,7 +6,7 @@ import MobileNav from './MobileNav';
 
 const Navbar = () => {
   return (
-    <nav className="fixed z-50 flex w-full items-center justify-between border-b border-slate-200 bg-white px-6 py-4 dark:border-slate-800 dark:bg-slate-950 lg:px-10">
+    <nav className="fixed z-50 flex w-full items-center justify-between glassmorphism px-6 py-4 lg:px-10">
       <Link href="/" className="flex items-center gap-2">
         {/* Replaced Image with Lucide Icon */}
         <Video size={32} className="text-blue-600 max-sm:size-10" />
