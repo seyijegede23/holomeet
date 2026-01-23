@@ -71,11 +71,19 @@ const MeetingRoom = () => {
   useEffect(() => {
     if (!isAdmitted && call && user) {
       // Send request immediately and periodically
-      const sendRequest = () => {
-         call.sendCustomEvent({
-            type: 'request_entry',
-            data: { id: user.id, name: user.fullName || user.id },
-         });
+      const sendRequest = async () => {
+         try {
+           // Ensure the call exists/we are connected to it for signaling
+           await call.get(); 
+           
+           await call.sendCustomEvent({
+              type: 'request_entry',
+              data: { id: user.id, name: user.fullName || user.id },
+           });
+           console.log("Request sent...");
+         } catch (error) {
+           console.error("Failed to send request:", error);
+         }
       };
       
       // Send one immediately
