@@ -12,7 +12,8 @@ import {
   DeviceSettings,
   CallParticipantsList,
 } from '@stream-io/video-react-sdk';
-import { LayoutList, Users, Mic, MicOff, Video, VideoOff, PhoneOff, MonitorUp, Settings, Disc, Smile, MoreHorizontal } from 'lucide-react';
+import { LayoutList, Users, Mic, MicOff, Video, VideoOff, PhoneOff, MonitorUp, Settings, Disc, Smile, MoreHorizontal, PenTool } from 'lucide-react';
+import MeetingWhiteboard from './MeetingWhiteboard';
 import { useUser } from '@clerk/nextjs';
 // Removed WaitingScreen import
 import { useToast } from './ui/use-toast';
@@ -37,6 +38,8 @@ const MeetingRoom = () => {
   const router = useRouter();
   const [layout, setLayout] = useState<CallLayoutType>('speaker-left');
   const [showParticipants, setShowParticipants] = useState(false);
+  const [showWhiteboard, setShowWhiteboard] = useState(false);
+
   const { useCallCallingState } = useCallStateHooks();
   const { toast } = useToast();
 
@@ -73,7 +76,11 @@ const MeetingRoom = () => {
           <CallLayout />
         </div>
         
-
+        {showWhiteboard && (
+           <div className="absolute inset-x-0 bottom-24 top-0 z-50 px-4 md:px-10">
+               <MeetingWhiteboard onClose={() => setShowWhiteboard(false)} />
+           </div>
+        )}
 
         <div
           className={cn('h-[calc(100vh-86px)] hidden ml-2', {
@@ -209,6 +216,19 @@ const MeetingRoom = () => {
                 </DropdownMenuContent>
               </DropdownMenu>
 
+               {/* Whiteboard Toggle (Desktop) */}
+               <Button
+                 onClick={() => setShowWhiteboard((prev) => !prev)}
+                 className={cn(
+                   "h-12 w-12 rounded-full transition-all duration-300",
+                   showWhiteboard
+                     ? "bg-purple-500 hover:bg-purple-600 text-white shadow-lg shadow-purple-500/30" 
+                     : "bg-slate-700 hover:bg-slate-600 text-white"
+                 )}
+               >
+                 <PenTool size={20} />
+               </Button>
+
                <CallStatsButton />
                
                 {/* Device Settings */}
@@ -259,9 +279,8 @@ const MeetingRoom = () => {
                             ))}
                          </div>
                     </DropdownMenuItem>
-
-                     <DropdownMenuItem className="focus:bg-slate-800 cursor-pointer">
-                        <Settings size={16} className="mr-2" /> Settings (Use Desktop for full)
+                    <DropdownMenuItem className="focus:bg-slate-800 cursor-pointer" onClick={() => setShowWhiteboard((prev) => !prev)}>
+                        <PenTool size={16} className="mr-2" /> {showWhiteboard ? "Hide Whiteboard" : "Show Whiteboard"}
                     </DropdownMenuItem>
                  </DropdownMenuContent>
              </DropdownMenu>
