@@ -198,24 +198,24 @@ const MeetingRoom = () => {
                         <div className="flex gap-1">
                            <Button
                               size="sm"
-                              className="h-7 w-7 rounded-sm bg-green-600 hover:bg-green-700 p-0 text-white"
+                              className="h-7 px-2 rounded-sm bg-green-600 hover:bg-green-700 text-white text-xs"
                               onClick={() => {
                                 call?.sendCustomEvent({ type: 'allow_entry', data: { id: u.id }, });
                                 setRequestingUsers((prev) => prev.filter((req) => req.id !== u.id));
                                 toast({ title: `${u.name} admitted` });
                               }}
                            >
-                             <span className="text-xs">Admit</span>
+                             Admit
                            </Button>
                            <Button
                               size="sm"
-                              className="h-7 w-7 rounded-sm bg-red-600 hover:bg-red-700 p-0 text-white"
+                              className="h-7 px-2 rounded-sm bg-red-600 hover:bg-red-700 text-white text-xs"
                               onClick={() => {
                                 setRequestingUsers((prev) => prev.filter((req) => req.id !== u.id));
                                 toast({ title: `${u.name} rejected` });
                               }}
                            >
-                              <span className="text-xs">Deny</span>
+                              Deny
                            </Button>
                         </div>
                       </div>
@@ -223,7 +223,11 @@ const MeetingRoom = () => {
                 </div>
              )}
 
-             <CallParticipantsList onClose={() => setShowParticipants(false)} />
+             {/* Standard Participant List - will be filtered by layout components */}
+             <div className="flex-1">
+               <h3 className="text-sm font-semibold text-slate-200 mb-2">In Meeting</h3>
+               <CallParticipantsList onClose={() => setShowParticipants(false)} />
+             </div>
           </div>
         </div>
       </div>
