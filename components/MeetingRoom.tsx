@@ -12,10 +12,9 @@ import {
   DeviceSettings,
   CallParticipantsList,
 } from '@stream-io/video-react-sdk';
-import { LayoutList, Users, Check, X, Mic, MicOff, Video, VideoOff, PhoneOff, MonitorUp, Settings, Disc, Smile, MoreHorizontal } from 'lucide-react';
-
+import { LayoutList, Users, Mic, MicOff, Video, VideoOff, PhoneOff, MonitorUp, Settings, Disc, Smile, MoreHorizontal } from 'lucide-react';
 import { useUser } from '@clerk/nextjs';
-import WaitingScreen from './WaitingScreen';
+// Removed WaitingScreen import
 import { useToast } from './ui/use-toast';
 
 import {
@@ -47,73 +46,14 @@ const MeetingRoom = () => {
   const { isEnabled: isMicEnabled } = useMicrophoneState();
   const { isEnabled: isCamEnabled } = useCameraState();
   // Simplified screen share check (can be advanced with observable)
-  const isScreenSharing = false; // Placeholder until correct hook found or implemented via state listener
-
-  const [isAdmitted, setIsAdmitted] = useState<boolean>(false);
-  const [requestingUsers, setRequestingUsers] = useState<{ id: string; name: string }[]>([]);
+  // Placeholder until correct hook found or implemented via state listener
+  const isScreenSharing = false; 
 
   const callingState = useCallCallingState();
 
-  useEffect(() => {
-    if (user && call?.state.createdBy && call.state.createdBy.id === user.id) {
-      setIsAdmitted(true);
-    }
-  }, [user, call]);
-
-  // Send join requests when not admitted
-  useEffect(() => {
-    if (callingState === CallingState.JOINED && !isAdmitted && call && user) {
-      const interval = setInterval(() => {
-        call.sendCustomEvent({
-          type: 'request_entry',
-          data: { id: user.id, name: user.fullName || user.id },
-        });
-      }, 3000);
-
-      const handleAllow = (event: any) => {
-        if (event.type === 'allow_entry' && event.data?.id === user.id) {
-          setIsAdmitted(true);
-        }
-      };
-
-      call.on('custom', handleAllow);
-
-      return () => {
-        clearInterval(interval);
-        call.off('custom', handleAllow);
-      };
-    }
-  }, [isAdmitted, callingState, call, user]);
-
-  // Host: Listen for requests
-  useEffect(() => {
-    if (callingState === CallingState.JOINED && isAdmitted && call && user) {
-      const handleRequest = (event: any) => {
-        if (event.type === 'request_entry') {
-          console.log("Request received from:", event.data);
-          setRequestingUsers((prev) => {
-            if (prev.find((u) => u.id === event.data.id)) return prev;
-            toast({ title: `New joining request from ${event.data.name}` });
-            return [...prev, { id: event.data.id, name: event.data.name }];
-          });
-        }
-      };
-      call.on('custom', handleRequest);
-      return () => call.off('custom', handleRequest);
-    }
-  }, [isAdmitted, callingState, call, user]);
-
-  // Auto-mute waiting guests
-  useEffect(() => {
-    if (!isAdmitted && call && callingState === CallingState.JOINED) {
-      call.camera.disable();
-      call.microphone.disable();
-    }
-  }, [isAdmitted, call, callingState]);
-
   if (callingState !== CallingState.JOINED) return <Loader />;
 
-  if (!isAdmitted) return <WaitingScreen />;
+
 
   const CallLayout = () => {
     switch (layout) {
@@ -135,100 +75,12 @@ const MeetingRoom = () => {
         
 
 
-        {/* Requests Overlay - increased visibility but hidden if sidebar is open */}
-        {requestingUsers.length > 0 && !showParticipants && (
-          <div className="absolute top-10 right-4 z-[100] flex w-80 flex-col gap-2 rounded-xl bg-slate-900/95 p-4 border border-slate-700 shadow-2xl backdrop-blur-md">
-             <h3 className="text-sm font-semibold text-slate-200 mb-2">Joining Requests ({requestingUsers.length})</h3>
-            {requestingUsers.map((u) => (
-              <div
-                key={u.id}
-                className="flex items-center justify-between rounded-lg bg-slate-800 p-3 shadow-md"
-              >
-                <div className="flex flex-col">
-                  <span className="font-medium text-white text-sm">{u.name}</span>
-                </div>
-                <div className="flex gap-2">
-                  <Button
-                    size="sm"
-                    className="h-8 w-8 rounded-full bg-green-500 hover:bg-green-600 p-0 text-white transition-transform hover:scale-110"
-                    onClick={() => {
-                      call?.sendCustomEvent({
-                        type: 'allow_entry',
-                        data: { id: u.id },
-                      });
-                      setRequestingUsers((prev) =>
-                        prev.filter((req) => req.id !== u.id)
-                      );
-                      toast({ title: `${u.name} admitted` });
-                    }}
-                  >
-                    <Check size={16} />
-                  </Button>
-                  <Button
-                    size="sm"
-                    className="h-8 w-8 rounded-full bg-red-500 hover:bg-red-600 p-0 text-white transition-transform hover:scale-110"
-                    onClick={() => {
-                      setRequestingUsers((prev) =>
-                        prev.filter((req) => req.id !== u.id)
-                      );
-                      toast({ title: `${u.name} rejected` });
-                    }}
-                  >
-                    <X size={16} />
-                  </Button>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-        
         <div
           className={cn('h-[calc(100vh-86px)] hidden ml-2', {
             'block': showParticipants,
           })}
         >
-          <div className="flex h-full flex-col gap-4 overflow-y-auto bg-slate-900/95 p-4 rounded-xl border border-slate-700 backdrop-blur-md w-[350px]">
-             {/* Integrated Waiting List */}
-             {requestingUsers.length > 0 && (
-                <div className="flex flex-col gap-2 border-b border-slate-700 pb-4 mb-2">
-                    <h3 className="text-sm font-semibold text-slate-200">Waiting Room ({requestingUsers.length})</h3>
-                    {requestingUsers.map((u) => (
-                      <div key={u.id} className="flex items-center justify-between rounded-lg bg-slate-800 p-2 text-sm shadow-sm">
-                        <span className="font-medium text-white truncate max-w-[120px]">{u.name}</span>
-                        <div className="flex gap-1">
-                           <Button
-                              size="sm"
-                              className="h-7 px-2 rounded-sm bg-green-600 hover:bg-green-700 text-white text-xs"
-                              onClick={() => {
-                                call?.sendCustomEvent({ type: 'allow_entry', data: { id: u.id }, });
-                                setRequestingUsers((prev) => prev.filter((req) => req.id !== u.id));
-                                toast({ title: `${u.name} admitted` });
-                              }}
-                           >
-                             Admit
-                           </Button>
-                           <Button
-                              size="sm"
-                              className="h-7 px-2 rounded-sm bg-red-600 hover:bg-red-700 text-white text-xs"
-                              onClick={() => {
-                                setRequestingUsers((prev) => prev.filter((req) => req.id !== u.id));
-                                toast({ title: `${u.name} rejected` });
-                              }}
-                           >
-                              Deny
-                           </Button>
-                        </div>
-                      </div>
-                    ))}
-                </div>
-             )}
-
-             {/* Standard Participant List - will be filtered by layout components */}
-             <div className="flex-1">
-               <h3 className="text-sm font-semibold text-slate-200 mb-2">In Meeting</h3>
-               <CallParticipantsList onClose={() => setShowParticipants(false)} />
-             </div>
-          </div>
+             <CallParticipantsList onClose={() => setShowParticipants(false)} />
         </div>
       </div>
 
