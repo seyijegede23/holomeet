@@ -82,9 +82,7 @@ const MeetingRoom = () => {
         </div>
         
         {showWhiteboard && (
-           <div className="absolute inset-x-0 bottom-24 top-0 z-50 px-4 md:px-10">
-               <MeetingWhiteboard onClose={() => setShowWhiteboard(false)} />
-           </div>
+             <MeetingWhiteboard onClose={() => setShowWhiteboard(false)} />
         )}
 
         <div
