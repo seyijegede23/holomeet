@@ -19,6 +19,7 @@ const initialValues = {
   dateTime: new Date(),
   description: '',
   link: '',
+  password: '',
 };
 
 const MeetingTypeList = () => {
@@ -50,6 +51,7 @@ const MeetingTypeList = () => {
           starts_at: startsAt,
           custom: {
             description,
+            password: values.password,
           },
         },
       });
@@ -119,6 +121,18 @@ const MeetingTypeList = () => {
               }
             />
           </div>
+          <div className="flex flex-col gap-2.5">
+            <label className="text-base font-normal leading-[22.4px] text-slate-700 dark:text-slate-300">
+              Add a password (optional)
+            </label>
+            <Input
+              type="text"
+              className="border-slate-200 bg-slate-50 focus-visible:ring-0 focus-visible:ring-offset-0 dark:border-slate-800 dark:bg-slate-900"
+              onChange={(e) =>
+                setValues({ ...values, password: e.target.value })
+              }
+            />
+          </div>
           <div className="flex w-full flex-col gap-2.5">
             <label className="text-base font-normal leading-[22.4px] text-slate-700 dark:text-slate-300">
               Select Date and Time
@@ -174,7 +188,20 @@ const MeetingTypeList = () => {
         className="text-center"
         buttonText="Start Meeting"
         handleClick={createMeeting}
-      />
+      >
+        <div className="flex flex-col gap-2.5 text-left">
+           <label className="text-base font-normal leading-[22.4px] text-slate-700 dark:text-slate-300">
+              Add a password (optional)
+            </label>
+            <Input
+              type="text"
+              className="border-slate-200 bg-slate-50 focus-visible:ring-0 focus-visible:ring-offset-0 dark:border-slate-800 dark:bg-slate-900"
+              onChange={(e) =>
+                setValues({ ...values, password: e.target.value })
+              }
+            />
+        </div>
+      </MeetingModal>
     </section>
   );
 };

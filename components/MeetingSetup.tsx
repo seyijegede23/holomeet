@@ -10,6 +10,9 @@ import {
 
 import Alert from './Alert';
 import { Button } from './ui/button';
+import { useUser } from '@clerk/nextjs';
+import { Input } from './ui/input';
+import { useToast } from './ui/use-toast';
 
 const MeetingSetup = ({
   setIsSetupComplete,
@@ -59,6 +62,48 @@ const MeetingSetup = ({
         iconUrl="/icons/call-ended.svg"
       />
     );
+
+  // Check for password
+  const [password, setPassword] = useState('');
+  const [isPasswordVerified, setIsPasswordVerified] = useState(false);
+  const { user } = useUser();
+  const { toast } = useToast();
+
+  const meetingPassword = call.state.custom?.password;
+  const isHost = call.state.createdBy?.id === user?.id;
+
+  // If there is a password and user is not verified and not host
+  if (meetingPassword && !isPasswordVerified && !isHost) {
+      return (
+          <div className="flex h-screen w-full flex-col items-center justify-center gap-6 bg-slate-950 p-4 text-white">
+              <h1 className="text-center text-2xl font-bold">Password Protected</h1>
+              <p className="text-slate-300">This meeting requires a password to join.</p>
+              
+              <div className="flex flex-col gap-4 w-full max-w-sm">
+                  <Input 
+                      type="password"
+                      placeholder="Enter Password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="border-slate-800 bg-slate-900 focus-visible:ring-0 focus-visible:ring-offset-0"
+                  />
+                  <Button
+                      onClick={() => {
+                          if (password === meetingPassword) {
+                              setIsPasswordVerified(true);
+                              toast({ title: "Authorized" });
+                          } else {
+                              toast({ title: "Incorrect Password", variant: "destructive" });
+                          }
+                      }}
+                      className="bg-blue-500 hover:bg-blue-600 w-full"
+                  >
+                      Submit
+                  </Button>
+              </div>
+          </div>
+      );
+  }
 
   return (
     <div className="flex h-screen w-full flex-col items-center justify-center gap-6 bg-slate-950 p-4 text-white">
