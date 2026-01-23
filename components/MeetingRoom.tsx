@@ -13,7 +13,12 @@ import {
   CallParticipantsList,
 } from '@stream-io/video-react-sdk';
 import { LayoutList, Users, Mic, MicOff, Video, VideoOff, PhoneOff, MonitorUp, Settings, Disc, Smile, MoreHorizontal, PenTool } from 'lucide-react';
-import MeetingWhiteboard from './MeetingWhiteboard';
+import dynamic from 'next/dynamic';
+
+const MeetingWhiteboard = dynamic(() => import('./MeetingWhiteboard'), {
+  ssr: false,
+  loading: () => <div className="flex h-full w-full items-center justify-center text-white">Loading Whiteboard...</div>,
+});
 import { useUser } from '@clerk/nextjs';
 // Removed WaitingScreen import
 import { useToast } from './ui/use-toast';
