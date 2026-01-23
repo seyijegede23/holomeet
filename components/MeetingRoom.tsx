@@ -60,14 +60,28 @@ const MeetingRoom = () => {
     }
   }, [user, call]);
 
+  // Handle Joining logic for guests
   useEffect(() => {
-    if (callingState === CallingState.JOINED && !isAdmitted && call && user) {
-      const interval = setInterval(() => {
-        call.sendCustomEvent({
-          type: 'request_entry',
-          data: { id: user.id, name: user.fullName || user.id },
-        });
-      }, 3000);
+    if (isAdmitted && call && callingState === CallingState.IDLE) {
+        call.join();
+    }
+  }, [isAdmitted, call, callingState]);
+
+  // Request Access Logic (Run when not admitted)
+  useEffect(() => {
+    if (!isAdmitted && call && user) {
+      // Send request immediately and periodically
+      const sendRequest = () => {
+         call.sendCustomEvent({
+            type: 'request_entry',
+            data: { id: user.id, name: user.fullName || user.id },
+         });
+      };
+      
+      // Send one immediately
+      sendRequest();
+
+      const interval = setInterval(sendRequest, 3000);
 
       const handleAllow = (event: any) => {
         if (event.type === 'allow_entry' && event.data?.id === user.id) {
@@ -82,50 +96,31 @@ const MeetingRoom = () => {
         call.off('custom', handleAllow);
       };
     }
-  }, [isAdmitted, callingState, call, user]);
+  }, [isAdmitted, call, user]);
 
+  // Host Logic: Listen for requests
   useEffect(() => {
-    // Relaxed condition: If I am admitted (Host), I should listen for requests.
-    if (callingState === CallingState.JOINED && isAdmitted && call && user) {
+    if (isAdmitted && call && user) {
       const handleRequest = (event: any) => {
         if (event.type === 'request_entry') {
           console.log("Request received from:", event.data);
           setRequestingUsers((prev) => {
-            if (prev.find((u) => u.id === event.data.id)) return prev;
-            toast({ title: `New joining request from ${event.data.name}` }); // Notification
-            return [...prev, { id: event.data.id, name: event.data.name }];
+             if (prev.find((u) => u.id === event.data.id)) return prev;
+             toast({ title: `New joining request from ${event.data.name}` }); 
+             return [...prev, { id: event.data.id, name: event.data.name }];
           });
         }
       };
       call.on('custom', handleRequest);
       return () => call.off('custom', handleRequest);
     }
-  }, [isAdmitted, callingState, call, user]);
+  }, [isAdmitted, call, user]);
 
-  // Toggle Media based on Admission status
-  useEffect(() => {
-    if (!isAdmitted && call) {
-        // Force disable if not admitted (Guest in waiting room)
-        const disableMedia = async () => {
-             await call.camera.disable();
-             await call.microphone.disable();
-        };
-        disableMedia();
-    } else if (isAdmitted && call) {
-        // Optional: Re-enable or let user decide. 
-        // usually, we want them to enter with what they chose in Setup, but if we forced it off, we might need to restore.
-        // For now, let's enable it so they aren't confused why they are mute.
-        const enableMedia = async () => {
-             await call.camera.enable();
-             await call.microphone.enable();
-        };
-        enableMedia();
-    }
-  }, [isAdmitted, call]);
 
+  if (callingState !== CallingState.JOINED && !isAdmitted) return <WaitingScreen />;
+  
+  // If admitted but still joining (loading), show loader
   if (callingState !== CallingState.JOINED) return <Loader />;
-
-  if (!isAdmitted) return <WaitingScreen />;
 
   const CallLayout = () => {
     switch (layout) {
