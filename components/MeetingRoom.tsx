@@ -60,36 +60,15 @@ const MeetingRoom = () => {
     }
   }, [user, call]);
 
-  // Handle Joining logic for guests
+  // Send join requests when not admitted
   useEffect(() => {
-    if (isAdmitted && call && callingState === CallingState.IDLE) {
-        call.join();
-    }
-  }, [isAdmitted, call, callingState]);
-
-  // Request Access Logic (Run when not admitted)
-  useEffect(() => {
-    if (!isAdmitted && call && user) {
-      // Send request immediately and periodically
-      const sendRequest = async () => {
-         try {
-           // Ensure the call exists/we are connected to it for signaling
-           await call.get(); 
-           
-           await call.sendCustomEvent({
-              type: 'request_entry',
-              data: { id: user.id, name: user.fullName || user.id },
-           });
-           console.log("Request sent...");
-         } catch (error) {
-           console.error("Failed to send request:", error);
-         }
-      };
-      
-      // Send one immediately
-      sendRequest();
-
-      const interval = setInterval(sendRequest, 3000);
+    if (callingState === CallingState.JOINED && !isAdmitted && call && user) {
+      const interval = setInterval(() => {
+        call.sendCustomEvent({
+          type: 'request_entry',
+          data: { id: user.id, name: user.fullName || user.id },
+        });
+      }, 3000);
 
       const handleAllow = (event: any) => {
         if (event.type === 'allow_entry' && event.data?.id === user.id) {
@@ -104,31 +83,37 @@ const MeetingRoom = () => {
         call.off('custom', handleAllow);
       };
     }
-  }, [isAdmitted, call, user]);
+  }, [isAdmitted, callingState, call, user]);
 
-  // Host Logic: Listen for requests
+  // Host: Listen for requests
   useEffect(() => {
-    if (isAdmitted && call && user) {
+    if (callingState === CallingState.JOINED && isAdmitted && call && user) {
       const handleRequest = (event: any) => {
         if (event.type === 'request_entry') {
           console.log("Request received from:", event.data);
           setRequestingUsers((prev) => {
-             if (prev.find((u) => u.id === event.data.id)) return prev;
-             toast({ title: `New joining request from ${event.data.name}` }); 
-             return [...prev, { id: event.data.id, name: event.data.name }];
+            if (prev.find((u) => u.id === event.data.id)) return prev;
+            toast({ title: `New joining request from ${event.data.name}` });
+            return [...prev, { id: event.data.id, name: event.data.name }];
           });
         }
       };
       call.on('custom', handleRequest);
       return () => call.off('custom', handleRequest);
     }
-  }, [isAdmitted, call, user]);
+  }, [isAdmitted, callingState, call, user]);
 
+  // Auto-mute waiting guests
+  useEffect(() => {
+    if (!isAdmitted && call && callingState === CallingState.JOINED) {
+      call.camera.disable();
+      call.microphone.disable();
+    }
+  }, [isAdmitted, call, callingState]);
 
-  if (callingState !== CallingState.JOINED && !isAdmitted) return <WaitingScreen />;
-  
-  // If admitted but still joining (loading), show loader
   if (callingState !== CallingState.JOINED) return <Loader />;
+
+  if (!isAdmitted) return <WaitingScreen />;
 
   const CallLayout = () => {
     switch (layout) {
