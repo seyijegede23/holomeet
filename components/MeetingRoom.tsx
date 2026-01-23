@@ -147,8 +147,8 @@ const MeetingRoom = () => {
         
 
 
-        {/* Requests Overlay - Increased Z-index and visibility */}
-        {requestingUsers.length > 0 && (
+        {/* Requests Overlay - increased visibility but hidden if sidebar is open */}
+        {requestingUsers.length > 0 && !showParticipants && (
           <div className="absolute top-10 right-4 z-[100] flex w-80 flex-col gap-2 rounded-xl bg-slate-900/95 p-4 border border-slate-700 shadow-2xl backdrop-blur-md">
              <h3 className="text-sm font-semibold text-slate-200 mb-2">Joining Requests ({requestingUsers.length})</h3>
             {requestingUsers.map((u) => (
@@ -199,7 +199,44 @@ const MeetingRoom = () => {
             'block': showParticipants,
           })}
         >
-          <CallParticipantsList onClose={() => setShowParticipants(false)} />
+          <div className="flex h-full flex-col gap-4 overflow-y-auto bg-slate-900/95 p-4 rounded-xl border border-slate-700 backdrop-blur-md w-[350px]">
+             {/* Integrated Waiting List */}
+             {requestingUsers.length > 0 && (
+                <div className="flex flex-col gap-2 border-b border-slate-700 pb-4 mb-2">
+                    <h3 className="text-sm font-semibold text-slate-200">Waiting Room ({requestingUsers.length})</h3>
+                    {requestingUsers.map((u) => (
+                      <div key={u.id} className="flex items-center justify-between rounded-lg bg-slate-800 p-2 text-sm shadow-sm">
+                        <span className="font-medium text-white truncate max-w-[120px]">{u.name}</span>
+                        <div className="flex gap-1">
+                           <Button
+                              size="sm"
+                              className="h-7 w-7 rounded-sm bg-green-600 hover:bg-green-700 p-0 text-white"
+                              onClick={() => {
+                                call?.sendCustomEvent({ type: 'allow_entry', data: { id: u.id }, });
+                                setRequestingUsers((prev) => prev.filter((req) => req.id !== u.id));
+                                toast({ title: `${u.name} admitted` });
+                              }}
+                           >
+                             <span className="text-xs">Admit</span>
+                           </Button>
+                           <Button
+                              size="sm"
+                              className="h-7 w-7 rounded-sm bg-red-600 hover:bg-red-700 p-0 text-white"
+                              onClick={() => {
+                                setRequestingUsers((prev) => prev.filter((req) => req.id !== u.id));
+                                toast({ title: `${u.name} rejected` });
+                              }}
+                           >
+                              <span className="text-xs">Deny</span>
+                           </Button>
+                        </div>
+                      </div>
+                    ))}
+                </div>
+             )}
+
+             <CallParticipantsList onClose={() => setShowParticipants(false)} />
+          </div>
         </div>
       </div>
 
