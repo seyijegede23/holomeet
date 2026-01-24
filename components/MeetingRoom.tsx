@@ -14,6 +14,7 @@ import {
 } from '@stream-io/video-react-sdk';
 import { LayoutList, Users, Mic, MicOff, Video, VideoOff, PhoneOff, MonitorUp, Settings, Disc, Smile, MoreHorizontal, PenTool } from 'lucide-react';
 import dynamic from 'next/dynamic';
+import MeetingReactionOverlay from './MeetingReactionOverlay';
 
 const MeetingWhiteboard = dynamic(() => import('./MeetingWhiteboard'), {
   ssr: false,
@@ -77,9 +78,11 @@ const MeetingRoom = () => {
   return (
     <section className="relative h-screen w-full overflow-hidden pt-4 text-white">
       <div className="relative flex size-full items-center justify-center">
-        <div className="flex size-full max-w-[1000px] items-center">
+        <div className="flex size-full max-w-full md:max-w-[1000px] items-center">
           <CallLayout />
         </div>
+        
+        <MeetingReactionOverlay />
         
         {showWhiteboard && (
              <MeetingWhiteboard onClose={() => setShowWhiteboard(false)} />
@@ -98,11 +101,11 @@ const MeetingRoom = () => {
       <div className="fixed bottom-0 flex w-full items-center justify-center gap-5 p-4 pb-8 sm:px-10">
         <div className="flex items-center justify-center gap-4 rounded-full glassmorphism2 p-3 shadow-2xl">
           
-          {/* Microphone Toggle */}
+          {/* Microphone Toggle - Desktop Only */}
           <Button
             onClick={() => call?.microphone.toggle()}
             className={cn(
-              "h-12 w-12 rounded-full transition-all duration-300",
+              "hidden md:flex h-12 w-12 rounded-full transition-all duration-300",
               isMicEnabled 
                 ? "bg-slate-700 hover:bg-slate-600 text-white" 
                 : "bg-red-500 hover:bg-red-600 text-white shadow-lg shadow-red-500/30"
@@ -111,11 +114,11 @@ const MeetingRoom = () => {
             {isMicEnabled ? <Mic size={20} /> : <MicOff size={20} />}
           </Button>
 
-          {/* Camera Toggle */}
+          {/* Camera Toggle - Desktop Only (Duplicate removed logic below handles both if needed, but keeping this explicitly for desktop layout) */}
           <Button
             onClick={() => call?.camera.toggle()}
             className={cn(
-              "h-12 w-12 rounded-full transition-all duration-300",
+              "hidden md:flex h-12 w-12 rounded-full transition-all duration-300",
               isCamEnabled 
                 ? "bg-slate-700 hover:bg-slate-600 text-white" 
                 : "bg-red-500 hover:bg-red-600 text-white shadow-lg shadow-red-500/30"
@@ -249,12 +252,50 @@ const MeetingRoom = () => {
 
           </div>
 
-          {/* Mobile "More" Menu - Visible only on mobile */}
-          <div className="md:hidden">
+          {/* Mobile Logic: Show Mic, Cam, End, and More */}
+          <div className="flex md:hidden items-center gap-3">
+             {/* Mic Toggle Mobile */}
+             <Button
+                onClick={() => call?.microphone.toggle()}
+                className={cn(
+                  "h-10 w-10 rounded-full transition-all duration-300 p-0",
+                  isMicEnabled 
+                    ? "bg-slate-700 hover:bg-slate-600 text-white" 
+                    : "bg-red-500 hover:bg-red-600 text-white shadow-lg shadow-red-500/30"
+                )}
+              >
+                {isMicEnabled ? <Mic size={18} /> : <MicOff size={18} />}
+              </Button>
+
+              {/* Cam Toggle Mobile */}
+              <Button
+                onClick={() => call?.camera.toggle()}
+                className={cn(
+                  "h-10 w-10 rounded-full transition-all duration-300 p-0",
+                  isCamEnabled 
+                    ? "bg-slate-700 hover:bg-slate-600 text-white" 
+                    : "bg-red-500 hover:bg-red-600 text-white shadow-lg shadow-red-500/30"
+                )}
+              >
+                {isCamEnabled ? <Video size={18} /> : <VideoOff size={18} />}
+              </Button>
+
+              {/* End Call Mobile */}
+               {!isPersonalRoom && (
+                  <div onClick={async () => {
+                    await call?.leave();
+                    router.push('/');
+                  }}>
+                     <Button className="h-10 w-12 rounded-full bg-red-600 hover:bg-red-700 text-white shadow-lg p-0">
+                        <PhoneOff size={20} />
+                     </Button>
+                  </div>
+              )}
+
              <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button className="h-12 w-12 rounded-full bg-slate-700 hover:bg-slate-600 text-white">
-                    <MoreHorizontal size={24} />
+                  <Button className="h-10 w-10 rounded-full bg-slate-700 hover:bg-slate-600 text-white p-0">
+                    <MoreHorizontal size={20} />
                   </Button>
                 </DropdownMenuTrigger>
                  <DropdownMenuContent className="mb-4 w-56 bg-slate-900 border-slate-700 text-white">
@@ -304,9 +345,9 @@ const MeetingRoom = () => {
             <Users size={20} />
           </Button>
 
-          {/* End Call Button - Wrapped or Replaced */}
+          {/* End Call Button - Desktop Only */}
           {!isPersonalRoom && (
-              <div onClick={async () => {
+              <div className="hidden md:block" onClick={async () => {
                 await call?.leave();
                 router.push('/');
               }}>
