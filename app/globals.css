@@ -19,7 +19,8 @@
 }
 
 .str-video__speaker-layout__wrapper {
-  max-height: 700px;
+  height: 100%;
+  max-height: 100%;
 }
 
 .str-video__call-controls__button {

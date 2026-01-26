@@ -58,6 +58,17 @@ const MeetingRoom = () => {
   // Placeholder until correct hook found or implemented via state listener
   const isScreenSharing = false; 
 
+  // Landscaping: simple hook to detect mobile size for layout adjustments
+  // We can also use a custom hook, but local state is fine for this component.
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    handleResize(); // Initial check
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const callingState = useCallCallingState();
 
   if (callingState !== CallingState.JOINED) return <Loader />;
@@ -71,7 +82,7 @@ const MeetingRoom = () => {
       case 'speaker-right':
         return <SpeakerLayout participantsBarPosition="left" />;
       default:
-        return <SpeakerLayout participantsBarPosition="right" />;
+        return <SpeakerLayout participantsBarPosition={isMobile ? 'bottom' : 'right'} />;
     }
   };
 
