@@ -46,7 +46,8 @@ const MeetingRoom = () => {
   const [showParticipants, setShowParticipants] = useState(false);
   const [showWhiteboard, setShowWhiteboard] = useState(false);
 
-  const { useCallCallingState } = useCallStateHooks();
+  // useCallCallingState hook is used later, duplicate removed here
+  // const { useCallCallingState } = useCallStateHooks();
   const { toast } = useToast();
 
   const { user } = useUser();
@@ -59,7 +60,6 @@ const MeetingRoom = () => {
   const isScreenSharing = false; 
 
   // Landscaping: simple hook to detect mobile size for layout adjustments
-  // We can also use a custom hook, but local state is fine for this component.
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -69,6 +69,9 @@ const MeetingRoom = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  const { useCallCallingState, useHasOngoingScreenShare } = useCallStateHooks();
+  // We need to know if *anyone* is screen sharing to switch layout
+  const hasOngoingScreenShare = useHasOngoingScreenShare();
   const callingState = useCallCallingState();
 
   if (callingState !== CallingState.JOINED) return <Loader />;
@@ -76,13 +79,23 @@ const MeetingRoom = () => {
 
 
   const CallLayout = () => {
+    if (isMobile) {
+        // Mobile Layout Logic:
+        // 1. If Screen Share is active -> Speaker Layout (Focus on content)
+        // 2. Otherwise -> Paginated Grid (Google Meet style)
+        if (hasOngoingScreenShare) {
+            return <SpeakerLayout participantsBarPosition="bottom" />;
+        }
+        return <PaginatedGridLayout />;
+    }
+
     switch (layout) {
       case 'grid':
         return <PaginatedGridLayout />;
       case 'speaker-right':
         return <SpeakerLayout participantsBarPosition="left" />;
       default:
-        return <SpeakerLayout participantsBarPosition={isMobile ? 'bottom' : 'right'} />;
+        return <SpeakerLayout participantsBarPosition="right" />;
     }
   };
 
