@@ -60,6 +60,14 @@ const MeetingRoom = () => {
   // Placeholder until correct hook found or implemented via state listener
   const isScreenSharing = false; 
 
+  const { useLocalParticipant } = useCallStateHooks();
+  const localParticipant = useLocalParticipant();
+
+  const isMeetingOwner =
+    localParticipant &&
+    call?.state.createdBy &&
+    localParticipant.userId === call.state.createdBy.id; 
+
   // Landscaping: simple hook to detect mobile size for layout adjustments
   const [isMobile, setIsMobile] = useState(false);
 
@@ -311,8 +319,17 @@ const MeetingRoom = () => {
               {/* End Call Mobile */}
                {!isPersonalRoom && (
                   <div onClick={async () => {
-                    await call?.leave();
-                    router.push('/');
+                       if (isMeetingOwner) {
+                           // Simple confirm for mobile host
+                            if (window.confirm("Do you want to end the meeting for everyone? Press 'OK' to End, 'Cancel' to just Leave.")) {
+                                await call?.endCall();
+                            } else {
+                                await call?.leave();
+                            }
+                       } else {
+                            await call?.leave();
+                       }
+                       router.push('/');
                   }}>
                      <Button className="h-10 w-12 rounded-full bg-red-600 hover:bg-red-700 text-white shadow-lg p-0">
                         <PhoneOff size={20} />
@@ -387,13 +404,46 @@ const MeetingRoom = () => {
 
           {/* End Call Button - Desktop Only */}
           {!isPersonalRoom && (
-              <div className="hidden md:block" onClick={async () => {
-                await call?.leave();
-                router.push('/');
-              }}>
-                 <Button className="h-12 w-14 rounded-full bg-red-600 hover:bg-red-700 text-white shadow-lg">
-                    <PhoneOff size={24} />
-                 </Button>
+              <div className="hidden md:block">
+                 {isMeetingOwner ? (
+                     <DropdownMenu>
+                         <DropdownMenuTrigger asChild>
+                             <Button className="h-12 w-14 rounded-full bg-red-600 hover:bg-red-700 text-white shadow-lg">
+                                <PhoneOff size={24} />
+                             </Button>
+                         </DropdownMenuTrigger>
+                         <DropdownMenuContent className="bg-slate-900 border-slate-700 text-white mb-2">
+                             <DropdownMenuItem 
+                                 className="text-red-500 focus:bg-red-900/20 focus:text-red-500 cursor-pointer"
+                                 onClick={async () => {
+                                     await call.endCall();
+                                     router.push('/');
+                                 }}
+                             >
+                                 End call for everyone
+                             </DropdownMenuItem>
+                             <DropdownMenuItem 
+                                 className="cursor-pointer focus:bg-slate-800"
+                                 onClick={async () => {
+                                     await call.leave();
+                                     router.push('/');
+                                 }}
+                             >
+                                 Leave call
+                             </DropdownMenuItem>
+                         </DropdownMenuContent>
+                     </DropdownMenu>
+                 ) : (
+                    <Button 
+                        onClick={async () => {
+                            await call?.leave();
+                            router.push('/');
+                        }}
+                        className="h-12 w-14 rounded-full bg-red-600 hover:bg-red-700 text-white shadow-lg"
+                    >
+                        <PhoneOff size={24} />
+                    </Button>
+                 )}
               </div>
           )}
         </div>
