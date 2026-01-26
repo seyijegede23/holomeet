@@ -13,7 +13,7 @@ interface MeetingWhiteboardProps {
 
 const MeetingWhiteboard = ({ className, onClose }: MeetingWhiteboardProps) => {
   return (
-    <div className={cn('fixed inset-0 z-[50] flex items-center justify-center p-4 md:p-10 bg-black/50 backdrop-blur-sm', className)}>
+    <div className={cn('fixed inset-0 z-[9999] flex items-center justify-center p-4 md:p-10 bg-black/50 backdrop-blur-sm', className)}>
       <div className="relative h-full w-full overflow-hidden rounded-xl border-2 border-slate-200 bg-white shadow-2xl">
           <div className="absolute right-4 top-4 z-[99999]">
              <Button 
