@@ -323,7 +323,13 @@ const MeetingRoom = () => {
                   </Button>
                 </DropdownMenuTrigger>
                  <DropdownMenuContent className="mb-4 w-56 bg-slate-900 border-slate-700 text-white">
-                    <DropdownMenuItem className="focus:bg-slate-800 cursor-pointer" onClick={() => call?.screenShare.toggle()}>
+                    <DropdownMenuItem className="focus:bg-slate-800 cursor-pointer" onClick={async () => {
+                        try {
+                          await call?.screenShare.toggle();
+                        } catch (error: any) {
+                          toast({ title: "Screen Share Failed", description: error.message || "Not supported on this browser.", variant: "destructive" });
+                        }
+                    }}>
                         <MonitorUp size={16} className="mr-2" /> Screen Share
                     </DropdownMenuItem>
                      <DropdownMenuItem className="focus:bg-slate-800 cursor-pointer" onClick={async () => {
