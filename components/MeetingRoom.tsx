@@ -14,6 +14,7 @@ import {
 } from '@stream-io/video-react-sdk';
 import { LayoutList, Users, Mic, MicOff, Video, VideoOff, PhoneOff, MonitorUp, Settings, Disc, Smile, MoreHorizontal, PenTool } from 'lucide-react';
 import dynamic from 'next/dynamic';
+import MeetingInfo from './MeetingInfo';
 import MeetingReactionOverlay from './MeetingReactionOverlay';
 
 const MeetingWhiteboard = dynamic(() => import('./MeetingWhiteboard'), {
@@ -106,6 +107,9 @@ const MeetingRoom = () => {
           <CallLayout />
         </div>
         
+        <div className="absolute left-4 top-4 z-50 hidden md:block">
+          <MeetingInfo />
+        </div>
         <MeetingReactionOverlay />
         
         {showWhiteboard && (
@@ -359,6 +363,9 @@ const MeetingRoom = () => {
                     <DropdownMenuItem className="focus:bg-slate-800 cursor-pointer" onClick={() => setShowWhiteboard((prev) => !prev)}>
                         <PenTool size={16} className="mr-2" /> {showWhiteboard ? "Hide Whiteboard" : "Show Whiteboard"}
                     </DropdownMenuItem>
+                    <div className="md:hidden w-full border-t border-slate-700 pt-1 mt-1">
+                       <MeetingInfo />
+                    </div>
                  </DropdownMenuContent>
              </DropdownMenu>
           </div>
