@@ -23,6 +23,11 @@
   max-height: 100%;
 }
 
+/* Force video to fit within the container (fix for zoomed screen share) */
+.str-video__speaker-layout__wrapper video {
+  object-fit: contain !important;
+}
+
 .str-video__call-controls__button {
   height: 40px;
 }
