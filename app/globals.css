@@ -160,6 +160,31 @@ video {
   }
 }
 
+/* Device Settings Styling */
+.str-video__device-settings {
+  background-color: transparent !important;
+  color: white !important;
+  padding: 0 !important;
+}
+
+.str-video__device-settings .str-video__menu-item {
+  color: white !important;
+}
+
+.str-video__device-settings__option-list {
+  background-color: #0f172a !important; /* slate-900 */
+  color: white !important;
+  border: 1px solid #334155 !important; /* slate-700 */
+}
+
+.str-video__device-settings__option {
+  color: white !important;
+}
+
+.str-video__device-settings__option:hover {
+  background-color: #1e293b !important; /* slate-800 */
+}
+
 @keyframes float-up {
   0% {
     transform: translateY(0) scale(0.5);
