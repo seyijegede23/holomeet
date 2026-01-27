@@ -105,7 +105,7 @@ const MeetingRoom = () => {
   return (
     <section className="relative h-screen w-full overflow-hidden pt-4 text-white">
       <div className="relative flex h-full w-full items-center justify-center">
-        <div className="h-full w-full">
+        <div className="flex h-full w-full max-w-[1000px] flex-col items-center justify-center gap-2 px-4 py-4 md:px-0">
           {renderCallLayout()}
         </div>
         
@@ -127,7 +127,7 @@ const MeetingRoom = () => {
 
       {/* Video Layout and Call Controls */}
       <div className="fixed bottom-0 flex w-full items-center justify-center gap-5 p-4 pb-8 sm:px-10">
-        <div className="flex items-center justify-center gap-4 rounded-full glassmorphism2 p-3 shadow-2xl">
+        <div className="flex w-full max-w-[1000px] items-center justify-center gap-4 rounded-full glassmorphism2 p-3 shadow-2xl flex-wrap">
           
           {/* Microphone Toggle - Desktop Only */}
           <Button

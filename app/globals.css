@@ -33,6 +33,11 @@
   height: 40px;
 }
 
+.str-video__participant-view {
+  border-radius: 10px;
+  overflow: hidden;
+}
+
 /* Force video elements to be visible */
 .str-video__participant-view video,
 .str-video__video-placeholder video,
