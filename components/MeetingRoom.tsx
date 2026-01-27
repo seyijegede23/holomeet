@@ -126,33 +126,33 @@ const MeetingRoom = () => {
       </div>
 
       {/* Video Layout and Call Controls */}
-      <div className="fixed bottom-0 flex w-full items-center justify-center gap-5 p-4 pb-8 sm:px-10">
-        <div className="flex w-full max-w-[1000px] items-center justify-center gap-4 rounded-full glassmorphism2 p-3 shadow-2xl flex-wrap">
+      <div className="fixed bottom-0 flex w-full items-center justify-center gap-5 p-2 pb-4 sm:px-6">
+        <div className="flex w-full max-w-[800px] items-center justify-center gap-2 rounded-full glassmorphism2 p-2 shadow-2xl flex-wrap">
           
           {/* Microphone Toggle - Desktop Only */}
           <Button
             onClick={() => call?.microphone.toggle()}
             className={cn(
-              "hidden md:flex h-12 w-12 rounded-full transition-all duration-300",
+              "hidden md:flex h-10 w-10 rounded-full transition-all duration-300",
               isMicEnabled 
                 ? "bg-slate-700 hover:bg-slate-600 text-white" 
                 : "bg-red-500 hover:bg-red-600 text-white shadow-lg shadow-red-500/30"
             )}
           >
-            {isMicEnabled ? <Mic size={20} /> : <MicOff size={20} />}
+            {isMicEnabled ? <Mic size={18} /> : <MicOff size={18} />}
           </Button>
 
           {/* Camera Toggle - Desktop Only (Duplicate removed logic below handles both if needed, but keeping this explicitly for desktop layout) */}
           <Button
             onClick={() => call?.camera.toggle()}
             className={cn(
-              "hidden md:flex h-12 w-12 rounded-full transition-all duration-300",
+              "hidden md:flex h-10 w-10 rounded-full transition-all duration-300",
               isCamEnabled 
                 ? "bg-slate-700 hover:bg-slate-600 text-white" 
                 : "bg-red-500 hover:bg-red-600 text-white shadow-lg shadow-red-500/30"
             )}
           >
-            {isCamEnabled ? <Video size={20} /> : <VideoOff size={20} />}
+            {isCamEnabled ? <Video size={18} /> : <VideoOff size={18} />}
           </Button>
 
           {/* Desktop Only Controls - Hidden on mobile */ }
@@ -167,7 +167,7 @@ const MeetingRoom = () => {
                     }
                 }}
                 className={cn(
-                  "h-12 w-12 rounded-full transition-all duration-300",
+                  "h-10 w-10 rounded-full transition-all duration-300",
                   // Check explicitly if *local* participant is sharing? 
                   // For now, we can check if the button should be 'active' if *we* are sharing.
                   // But the hook `useHasOngoingScreenShare` is global.
@@ -177,7 +177,7 @@ const MeetingRoom = () => {
                    "bg-slate-700 hover:bg-slate-600 text-white"
                 )}
               >
-                <MonitorUp size={20} />
+                <MonitorUp size={18} />
               </Button>
 
               {/* Recording Toggle */}
@@ -202,14 +202,14 @@ const MeetingRoom = () => {
                     : "bg-slate-700 hover:bg-slate-600 text-white"
                 )}
               >
-               <Disc size={20} />
+               <Disc size={18} />
               </Button>
 
                {/* Reactions Toggle */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button className="h-12 w-12 rounded-full bg-slate-700 hover:bg-slate-600 text-white">
-                    <Smile size={20} />
+                  <Button className="h-10 w-10 rounded-full bg-slate-700 hover:bg-slate-600 text-white">
+                    <Smile size={18} />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="mb-4 bg-slate-900 border-slate-700 text-white w-full max-w-[200px] flex gap-2 p-2 flex-wrap justify-center translate-y-[-10px]">
@@ -238,9 +238,9 @@ const MeetingRoom = () => {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
-                    className="h-12 w-12 rounded-full bg-slate-700 hover:bg-slate-600 text-white"
+                    className="h-10 w-10 rounded-full bg-slate-700 hover:bg-slate-600 text-white"
                   >
-                    <LayoutList size={20} />
+                    <LayoutList size={18} />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="mb-4 bg-slate-900 border-slate-700 text-white">
@@ -267,8 +267,8 @@ const MeetingRoom = () => {
                 {/* Device Settings */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button className="h-12 w-12 rounded-full bg-slate-700 hover:bg-slate-600 text-white">
-                    <Settings size={20} />
+                  <Button className="h-10 w-10 rounded-full bg-slate-700 hover:bg-slate-600 text-white">
+                    <Settings size={18} />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-80 bg-slate-900 border-slate-700 p-4 text-white">
@@ -382,13 +382,13 @@ const MeetingRoom = () => {
           <Button
             onClick={() => setShowParticipants((prev) => !prev)}
              className={cn(
-              "h-12 w-12 rounded-full transition-all duration-300",
+              "h-10 w-10 rounded-full transition-all duration-300",
               showParticipants 
                 ? "bg-blue-500 hover:bg-blue-600 text-white shadow-lg shadow-blue-500/30" 
                 : "bg-slate-700 hover:bg-slate-600 text-white"
             )}
           >
-            <Users size={20} />
+            <Users size={18} />
           </Button>
 
           {/* End Call Button - Desktop Only */}
@@ -397,8 +397,8 @@ const MeetingRoom = () => {
                  {isMeetingOwner ? (
                      <DropdownMenu>
                          <DropdownMenuTrigger asChild>
-                             <Button className="h-12 w-14 rounded-full bg-red-600 hover:bg-red-700 text-white shadow-lg">
-                                <PhoneOff size={24} />
+                             <Button className="h-11 w-12 rounded-full bg-red-600 hover:bg-red-700 text-white shadow-lg">
+                                <PhoneOff size={20} />
                              </Button>
                          </DropdownMenuTrigger>
                          <DropdownMenuContent className="bg-slate-900 border-slate-700 text-white mb-2">
@@ -428,9 +428,9 @@ const MeetingRoom = () => {
                             await call?.leave();
                             router.push('/');
                         }}
-                        className="h-12 w-14 rounded-full bg-red-600 hover:bg-red-700 text-white shadow-lg"
+                        className="h-11 w-12 rounded-full bg-red-600 hover:bg-red-700 text-white shadow-lg"
                     >
-                        <PhoneOff size={24} />
+                        <PhoneOff size={20} />
                     </Button>
                  )}
               </div>
