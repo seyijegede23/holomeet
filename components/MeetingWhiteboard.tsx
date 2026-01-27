@@ -1,7 +1,7 @@
 'use client';
 
 import { Tldraw } from 'tldraw';
-import 'tldraw/tldraw.css';
+// import 'tldraw/tldraw.css'; // Temporarily disabled to debug video visibility conflict
 import { cn } from '@/lib/utils';
 import { X } from 'lucide-react';
 import { Button } from './ui/button';
