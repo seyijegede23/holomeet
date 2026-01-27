@@ -53,12 +53,13 @@ const MeetingRoom = () => {
 
   const { user } = useUser();
   const call = useCall();
-  const { useMicrophoneState, useCameraState } = useCallStateHooks();
+  const { useMicrophoneState, useCameraState, useCallCallingState, useHasOngoingScreenShare } = useCallStateHooks();
   const { isEnabled: isMicEnabled } = useMicrophoneState();
   const { isEnabled: isCamEnabled } = useCameraState();
-  // Simplified screen share check (can be advanced with observable)
-  // Placeholder until correct hook found or implemented via state listener
-  const isScreenSharing = false; 
+  
+  // We need to know if *anyone* is screen sharing to switch layout
+  const hasOngoingScreenShare = useHasOngoingScreenShare();
+  const callingState = useCallCallingState(); 
 
   const { useLocalParticipant } = useCallStateHooks();
   const localParticipant = useLocalParticipant();
@@ -78,10 +79,7 @@ const MeetingRoom = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const { useCallCallingState, useHasOngoingScreenShare } = useCallStateHooks();
-  // We need to know if *anyone* is screen sharing to switch layout
-  const hasOngoingScreenShare = useHasOngoingScreenShare();
-  const callingState = useCallCallingState();
+
 
   if (callingState !== CallingState.JOINED) return <Loader />;
 
@@ -167,12 +165,22 @@ const MeetingRoom = () => {
           <div className="hidden md:flex items-center gap-4">
                {/* Screen Share Toggle */}
               <Button
-                onClick={() => call?.screenShare.toggle()}
+                onClick={async () => {
+                    try {
+                        await call?.screenShare.toggle();
+                    } catch(error) {
+                        console.error(error);
+                    }
+                }}
                 className={cn(
                   "h-12 w-12 rounded-full transition-all duration-300",
-                  isScreenSharing
-                    ? "bg-slate-700 hover:bg-slate-600 text-white" 
-                    : "bg-slate-700 hover:bg-slate-600 text-white"
+                  // Check explicitly if *local* participant is sharing? 
+                  // For now, we can check if the button should be 'active' if *we* are sharing.
+                  // But the hook `useHasOngoingScreenShare` is global.
+                  // For simplicity in this fix, we just keep the button state neutral or active if *someone* is sharing?
+                  // Better: check screenShare state if possible from call object or local participant.
+                  // For now, simpler UI:
+                   "bg-slate-700 hover:bg-slate-600 text-white"
                 )}
               >
                 <MonitorUp size={20} />

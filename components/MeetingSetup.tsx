@@ -129,9 +129,14 @@ const MeetingSetup = ({
       <Button
         className="rounded-md bg-green-500 px-8 py-4 text-base font-semibold hover:bg-green-600"
         size="lg"
-        onClick={() => {
-          call.join();
-          setIsSetupComplete(true);
+        onClick={async () => {
+          try {
+             await call.join();
+             setIsSetupComplete(true);
+          } catch (error) {
+             console.error('Failed to join meeting', error);
+             toast({ title: 'Failed to join meeting', description: 'Please try again', variant: 'destructive' });
+          }
         }}
       >
         Join Meeting
