@@ -33,6 +33,16 @@
   height: 40px;
 }
 
+/* Force video elements to be visible */
+.str-video__participant-view video,
+.str-video__video-placeholder video,
+video {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+
 /* Theming for Stream Components 
    Default (Light Mode) -> Dark Mode overrides
 */

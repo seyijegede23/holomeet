@@ -132,6 +132,13 @@ const MeetingSetup = ({
         onClick={async () => {
           try {
              await call.join();
+             
+             // Explicitly start publishing video/audio tracks
+             if (!isMicCamToggled) {
+               await call.camera.enable();
+               await call.microphone.enable();
+             }
+             
              setIsSetupComplete(true);
           } catch (error) {
              console.error('Failed to join meeting', error);
