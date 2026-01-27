@@ -80,11 +80,12 @@ const MeetingRoom = () => {
 
 
 
-  const CallLayout = () => {
+  /* 
+    Refactored to inline logic to prevent "Too many WebMediaPlayers" error 
+    caused by defining a component inside a render loop.
+  */
+  const renderCallLayout = () => {
     if (isMobile) {
-        // Mobile Layout Logic:
-        // 1. If Screen Share is active -> Speaker Layout (Focus on content)
-        // 2. Otherwise -> Paginated Grid (Google Meet style)
         if (hasOngoingScreenShare) {
             return <SpeakerLayout participantsBarPosition="bottom" />;
         }
@@ -105,7 +106,7 @@ const MeetingRoom = () => {
     <section className="relative h-screen w-full overflow-hidden pt-4 text-white">
       <div className="relative flex h-full w-full items-center justify-center">
         <div className="h-full w-full">
-          <CallLayout />
+          {renderCallLayout()}
         </div>
         
         <div className="absolute left-4 top-4 z-50 hidden md:block">
