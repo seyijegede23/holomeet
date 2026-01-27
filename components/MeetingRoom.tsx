@@ -85,10 +85,13 @@ const MeetingRoom = () => {
     caused by defining a component inside a render loop.
   */
   const renderCallLayout = () => {
+    // If someone is sharing their screen, force Speaker Layout
+    // This ensures the shared screen takes focus
+    if (hasOngoingScreenShare) {
+        return <SpeakerLayout participantsBarPosition="bottom" />;
+    }
+
     if (isMobile) {
-        if (hasOngoingScreenShare) {
-            return <SpeakerLayout participantsBarPosition="bottom" />;
-        }
         return <PaginatedGridLayout />;
     }
 
