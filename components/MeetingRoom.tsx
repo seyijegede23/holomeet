@@ -39,7 +39,7 @@ const MeetingRoom = () => {
   const searchParams = useSearchParams();
   const isPersonalRoom = !!searchParams.get('personal');
   const router = useRouter();
-  const [layout, setLayout] = useState<CallLayoutType>('speaker-left');
+  const [layout, setLayout] = useState<CallLayoutType>('grid');
   const [showParticipants, setShowParticipants] = useState(false);
 
   // useCallCallingState hook is used later, duplicate removed here
@@ -103,8 +103,8 @@ const MeetingRoom = () => {
 
   return (
     <section className="relative h-screen w-full overflow-hidden pt-4 text-white">
-      <div className="relative flex size-full items-center justify-center">
-        <div className="flex size-full max-w-full md:max-w-[1000px] items-center">
+      <div className="relative flex h-full w-full items-center justify-center">
+        <div className="h-full w-full">
           <CallLayout />
         </div>
         
